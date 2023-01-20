@@ -6,14 +6,21 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainWeatherModule(
     name: String,
@@ -34,6 +41,10 @@ fun MainWeatherModule(
         // Location name
         Text(
             modifier = Modifier
+                .semantics {
+                    testTag = "LocationNameLabel"
+                    testTagsAsResourceId = true
+                }
                 .padding(top = 54.dp),
             text = name,
             fontWeight = FontWeight.Normal,
@@ -46,6 +57,10 @@ fun MainWeatherModule(
         // Country name
         Text(
             modifier = Modifier
+                .semantics {
+                    testTag = "CountryNameLabel"
+                    testTagsAsResourceId = true
+                }
                 .padding(top = 8.dp),
             text = country,
             fontWeight = FontWeight.Normal,
@@ -58,6 +73,10 @@ fun MainWeatherModule(
         // Big weather text
         Text(
             modifier = Modifier
+                .semantics {
+                    testTag = "BigWeatherLabel"
+                    testTagsAsResourceId = true
+                }
                 .padding(top = 16.dp),
             text = "$weather°",
             fontWeight = FontWeight.Medium,
@@ -69,9 +88,13 @@ fun MainWeatherModule(
 
         // Weather description
         Text(
-            text = description,
-            Modifier
+            modifier = Modifier
+                .semantics {
+                    testTag = "WeatherDescriptionLabel"
+                    testTagsAsResourceId = true
+                }
                 .padding(top = 8.dp),
+            text = description,
             fontWeight = FontWeight.Normal,
             fontFamily = FontFamily.Monospace,
             fontSize = 16.sp,
@@ -89,9 +112,13 @@ fun MainWeatherModule(
 
             // Feels like temp
             Text(
-                text = "Feels like: $feelsLike°",
-                Modifier
+                modifier = Modifier
+                    .semantics {
+                        testTag = "FeelsLikeLabel"
+                        testTagsAsResourceId = true
+                    }
                     .padding(top = 8.dp),
+                text = "Feels like: $feelsLike°",
                 fontWeight = FontWeight.Normal,
                 fontFamily = FontFamily.Monospace,
                 fontSize = 16.sp,
@@ -106,9 +133,13 @@ fun MainWeatherModule(
 
             // Humidity
             Text(
-                text = "Humidity: $humidity%",
-                Modifier
+                modifier = Modifier
+                    .semantics {
+                        testTag = "HumidityLabel"
+                        testTagsAsResourceId = true
+                    }
                     .padding(top = 8.dp),
+                text = "Humidity: $humidity%",
                 fontWeight = FontWeight.Normal,
                 fontFamily = FontFamily.Monospace,
                 fontSize = 16.sp,
