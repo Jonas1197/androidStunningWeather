@@ -12,8 +12,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,10 +23,9 @@ import com.example.stunningweather.presentation.main_screen.modules.MainWeatherM
 import com.example.stunningweather.presentation.main_screen.modules.WeatherCell
 import com.example.stunningweather.presentation.main_screen.modules.ScrollComponent
 import com.example.stunningweather.presentation.PermissionRequesters
-import com.example.stunningweather.ui.theme.BlueSky
-import com.example.stunningweather.ui.theme.BrightRed
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.example.stunningweather.R
+import com.example.stunningweather.ui.ColorConstants
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -47,10 +44,7 @@ fun MainScreen(
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    listOf(
-                        BrightRed,
-                        BlueSky
-                    )
+                    viewModel.weatherThemeBasedOnDayTime()
                 )
             )
     ) {
@@ -136,12 +130,10 @@ fun MainScreen(
                         isHorizontal = false,
                         fillsMaxHeight = true
                     ) { _, item ->
-                        val timestamp = item.date_epoch
+                        val timestamp = item.date_epoch * 1000
                         val dateFormat = SimpleDateFormat("EEEE", Locale.GERMAN)
                         val date = Date(timestamp.toLong())
                         val dayString = dateFormat.format(date)
-
-                        println("~~> Day: $dayString")
 
                         WeatherCell(
                             title = dayString,
