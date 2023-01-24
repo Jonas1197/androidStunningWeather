@@ -1,7 +1,7 @@
 package com.example.stunningweather.models
 
 class Location(
-     val name: String = "-1",
+    val name: String = "-1",
     val region: String = "-1" ,
     val country: String = "-1" ,
     val lat: Double = -1.0,

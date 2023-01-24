@@ -5,8 +5,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.stunningweather.network.ApiService
 import com.example.stunningweather.presentation.main_screen.MainScreen
 import com.example.stunningweather.presentation.main_screen.MainScreenViewModel
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 fun Navigation() {
@@ -19,9 +22,7 @@ fun Navigation() {
     ) {
 
         composable(Screen.MainScreen.route) {
-
             MainScreen(
-                viewModel = hiltViewModel(),
                 navigationCallback = { screen ->
                     navController.navigate(screen.route)
                 }

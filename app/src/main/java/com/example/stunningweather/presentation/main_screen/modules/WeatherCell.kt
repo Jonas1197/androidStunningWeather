@@ -16,11 +16,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.SimpleDateFormat
+import java.util.*
 
-@Preview
 @Composable
 fun WeatherCell(
-    title: String = "Now",
+    timestamp: Int? = null,
+    title: String? = null,
     weather: Double = 0.0,
     isHorizontal: Boolean = false
 ) {
@@ -40,9 +42,18 @@ fun WeatherCell(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
+                var titleStr = ""
+
+                titleStr = if(timestamp != null) {
+                    val timestamp = timestamp * 1000
+                    val dateFormat = SimpleDateFormat("EEEE", Locale.GERMAN)
+                    val date = Date(timestamp.toLong())
+                    dateFormat.format(date)
+                } else
+                    title ?: "TITLE"
 
                 Text(
-                    text = title,
+                    text = titleStr,
                     fontWeight = FontWeight.Normal,
                     fontStyle = FontStyle.Normal,
                     fontFamily = FontFamily.Monospace,
@@ -72,8 +83,19 @@ fun WeatherCell(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
+
+                var titleStr = ""
+
+                titleStr = if(timestamp != null) {
+                    val timestamp = timestamp * 1000
+                    val dateFormat = SimpleDateFormat("EEEE", Locale.GERMAN)
+                    val date = Date(timestamp.toLong())
+                    dateFormat.format(date)
+                } else
+                    title ?: "TITLE"
+
                 Text(
-                    text = title,
+                    text = titleStr,
                     fontWeight = FontWeight.Normal,
                     fontStyle = FontStyle.Normal,
                     fontFamily = FontFamily.Monospace,

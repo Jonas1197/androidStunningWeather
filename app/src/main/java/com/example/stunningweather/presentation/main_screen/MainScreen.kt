@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.stunningweather.navigation.Screen
 import com.example.stunningweather.presentation.NetworkUtils
 import com.example.stunningweather.presentation.main_screen.modules.MainWeatherModule
@@ -35,7 +36,7 @@ import java.util.*
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun MainScreen(
-    viewModel: MainScreenViewModel,
+    viewModel: MainScreenViewModel = hiltViewModel(),
     navigationCallback: (Screen) -> Unit
 ) {
 
@@ -130,13 +131,8 @@ fun MainScreen(
                         isHorizontal = false,
                         fillsMaxHeight = true
                     ) { _, item ->
-                        val timestamp = item.date_epoch * 1000
-                        val dateFormat = SimpleDateFormat("EEEE", Locale.GERMAN)
-                        val date = Date(timestamp.toLong())
-                        val dayString = dateFormat.format(date)
-
                         WeatherCell(
-                            title = dayString,
+                            timestamp = item.date_epoch,
                             weather = item.day.maxtemp_c,
                             isHorizontal = true
                         )
