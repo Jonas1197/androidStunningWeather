@@ -26,10 +26,8 @@ import com.example.stunningweather.presentation.main_screen.modules.ScrollCompon
 import com.example.stunningweather.presentation.PermissionRequesters
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.example.stunningweather.R
-import com.example.stunningweather.ui.ColorConstants
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -92,7 +90,7 @@ fun MainScreen(
                     locationRequestHandler = {
                         MainScope().launch { it.launchPermissionRequest() }
                     }) {
-                    viewModel.fetchWeatherForCurrnetLocation(context)
+                    viewModel.fetchWeatherForCurrentLocation(context)
                 }
             }
 

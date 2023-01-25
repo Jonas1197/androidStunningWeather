@@ -23,8 +23,7 @@ class MainScreenViewModel @Inject constructor(
     var state = MainScreenStateObject()
 
     @SuppressLint("MissingPermission")
-    fun fetchWeatherForCurrnetLocation(context: Context) {
-
+    fun fetchWeatherForCurrentLocation(context: Context) {
         val fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(context)
 
