@@ -16,4 +16,12 @@ class CacheWeatherData {
 
     @ColumnInfo(name = "weatherData")
     var data: GeneralForecast = GeneralForecast()
+
+    constructor(
+        id: Int,
+        data: GeneralForecast
+    ) {
+        this.id = id
+        this.data = data
+    }
 }

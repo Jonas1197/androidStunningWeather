@@ -6,8 +6,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.GeneralConstants
+import com.example.stunningweather.models.GeneralForecast
 import com.example.stunningweather.ui.ColorConstants
 import com.example.stunningweather.usecases.api_service.FetchWeatherDataUseCaseApi
+import com.example.stunningweather.usecases.database.SaveCurrentWeatherDataUseCase
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val fetchWeatherData: FetchWeatherDataUseCaseApi
+    private val fetchWeatherData: FetchWeatherDataUseCaseApi,
+    private val saveDataUseCase: SaveCurrentWeatherDataUseCase
 ): ViewModel() {
 
     var state = MainScreenStateObject()
@@ -33,15 +36,24 @@ class MainScreenViewModel @Inject constructor(
                 val coordinates = "${it.latitude},${it.longitude}"
 
                 viewModelScope.launch(Dispatchers.IO) {
-                    state.generalForecast.value = fetchWeatherData.invoke(
+
+                    val weatherData = fetchWeatherData.invoke(
                         GeneralConstants.apiKey,
                         coordinates
                     )
 
+                    state.generalForecast.value = weatherData
                     state.didFetchWeather = true
+
+                    saveFetchedWeatherData(weatherData)
                 }
             }
         }
+    }
+
+    private suspend fun saveFetchedWeatherData(data: GeneralForecast) {
+        val arguments = mapOf(GeneralConstants.dataToSave to data)
+        saveDataUseCase.invoke(arguments)
     }
 
     fun weatherThemeBasedOnDayTime(): List<Color> {

@@ -19,7 +19,10 @@ class GeneralConstants {
         // Text
         const val noConnectionText = "Wops! Looks like your internet connection is gone!"
         const val noConnectionImage = R.drawable.noconnection
-        
+
+        // Arguments keys
+        const val dataToSave = "dataToSave"
+        const val idOfDataToFetch = "id"
     }
 
 }
