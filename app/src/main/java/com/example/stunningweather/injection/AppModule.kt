@@ -1,7 +1,6 @@
 package com.example.stunningweather.injection
 
 import com.example.stunningweather.network.ApiService
-import com.example.stunningweather.usecases.FetchWeatherDataUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

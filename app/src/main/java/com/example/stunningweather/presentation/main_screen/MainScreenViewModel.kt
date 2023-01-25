@@ -5,8 +5,9 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.GeneralConstants
 import com.example.stunningweather.ui.ColorConstants
-import com.example.stunningweather.usecases.FetchWeatherDataUseCase
+import com.example.stunningweather.usecases.api_service.FetchWeatherDataUseCaseApi
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val fetchWeatherData: FetchWeatherDataUseCase
+    private val fetchWeatherData: FetchWeatherDataUseCaseApi
 ): ViewModel() {
 
     var state = MainScreenStateObject()
@@ -33,7 +34,7 @@ class MainScreenViewModel @Inject constructor(
 
                 viewModelScope.launch(Dispatchers.IO) {
                     state.generalForecast.value = fetchWeatherData.invoke(
-                        "94d3917c681b4dba821100254231201",
+                        GeneralConstants.apiKey,
                         coordinates
                     )
 
@@ -44,30 +45,29 @@ class MainScreenViewModel @Inject constructor(
     }
 
     fun weatherThemeBasedOnDayTime(): List<Color> {
-        val morning = "05:00:00"
-        val day = "12:00:00"
-        val evening = "17:00:00"
+
+        val currentLocale = Locale.getDefault()
 
         val timeMorning = SimpleDateFormat(
-            "HH:mm:ss",
-            Locale.GERMAN
-        ).parse(morning)
+            GeneralConstants.timeFormat,
+            currentLocale
+        ).parse(GeneralConstants.morningTime)
 
         val timeDay = SimpleDateFormat(
-            "HH:mm:ss",
-            Locale.GERMAN
-        ).parse(day)
+            GeneralConstants.timeFormat,
+            currentLocale
+        ).parse(GeneralConstants.dayTime)
 
         val timeEvening = SimpleDateFormat(
-            "HH:mm:ss",
-            Locale.GERMAN
-        ).parse(evening)
+            GeneralConstants.timeFormat,
+            currentLocale
+        ).parse(GeneralConstants.eveningTime)
 
         val current = Calendar.getInstance()
 
         val currentTime = SimpleDateFormat(
-            "HH:mm:ss",
-            Locale.GERMAN
+            GeneralConstants.timeFormat,
+            currentLocale
         ).parse("${current.get(Calendar.HOUR_OF_DAY)}:" +
                 "${current.get(Calendar.MINUTE)}:" +
                 "${current.get(Calendar.SECOND)}") ?: return ColorConstants.dayGradient

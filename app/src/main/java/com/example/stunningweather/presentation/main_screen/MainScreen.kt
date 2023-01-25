@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.GeneralConstants
 import com.example.stunningweather.navigation.Screen
 import com.example.stunningweather.presentation.NetworkUtils
 import com.example.stunningweather.presentation.main_screen.modules.MainWeatherModule
@@ -56,13 +57,10 @@ fun MainScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Spacer(
-                    Modifier
-                        .height(160.dp)
-                )
+                Spacer(Modifier.height(160.dp))
 
                 Text(
-                    text = "Wops! Looks like your internet connection is gone!",
+                    text = GeneralConstants.noConnectionText,
                     fontFamily = FontFamily.Monospace,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Medium,
@@ -70,15 +68,12 @@ fun MainScreen(
                     color = Color.White
                 )
 
-                Spacer(
-                    Modifier
-                        .height(18.dp)
-                )
+                Spacer(Modifier.height(18.dp))
 
                 Image(
                     modifier = Modifier
                         .padding(48.dp),
-                    painter = painterResource(R.drawable.noconnection),
+                    painter = painterResource(GeneralConstants.noConnectionImage),
                     contentDescription = null)
             }
 
@@ -89,13 +84,12 @@ fun MainScreen(
                     context = LocalContext.current,
                     locationRequestHandler = {
                         MainScope().launch { it.launchPermissionRequest() }
-                    }) {
-                    viewModel.fetchWeatherForCurrentLocation(context)
-                }
+
+                    }) { viewModel.fetchWeatherForCurrentLocation(context) }
             }
 
 
-//         Current weather
+            // Current weather
             Column {
                 MainWeatherModule(
                     name = viewModel.state.generalForecast.value.location.name,
@@ -108,7 +102,7 @@ fun MainScreen(
 
 
                 // Hourly forecast
-                if(viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty()) {
+                if (viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty()) {
                     ScrollComponent(
                         items = viewModel.state.generalForecast.value.forecast.forecastday.first().hour,
                         height = 150.dp
@@ -123,7 +117,7 @@ fun MainScreen(
 
 
                 // Daily forecast
-                if(viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty()) {
+                if (viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty())
                     ScrollComponent(
                         items = viewModel.state.generalForecast.value.forecast.forecastday,
                         isHorizontal = false,
@@ -135,7 +129,6 @@ fun MainScreen(
                             isHorizontal = true
                         )
                     }
-                }
             }
         }
     }
