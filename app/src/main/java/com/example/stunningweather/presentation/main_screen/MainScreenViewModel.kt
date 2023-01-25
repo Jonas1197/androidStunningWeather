@@ -2,26 +2,22 @@ package com.example.stunningweather.presentation.main_screen
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.stunningweather.network.ApiService
 import com.example.stunningweather.ui.ColorConstants
+import com.example.stunningweather.usecases.FetchWeatherDataUseCase
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val apiService: ApiService
+    private val fetchWeatherData: FetchWeatherDataUseCase
 ): ViewModel() {
 
     var state = MainScreenStateObject()
@@ -36,21 +32,14 @@ class MainScreenViewModel @Inject constructor(
             location?.let {
                 val coordinates = "${it.latitude},${it.longitude}"
 
-
-                //This should be a use case ------------
                 viewModelScope.launch(Dispatchers.IO) {
-                    state.generalForecast.value = apiService
-                        .fetchWeatherData(
-                            apiKey = "94d3917c681b4dba821100254231201",
-                            coordinates = coordinates
-                        )
+                    state.generalForecast.value = fetchWeatherData.invoke(
+                        "94d3917c681b4dba821100254231201",
+                        coordinates
+                    )
 
                     state.didFetchWeather = true
                 }
-                //-------------------------------
-
-
-
             }
         }
     }
@@ -84,16 +73,14 @@ class MainScreenViewModel @Inject constructor(
                 "${current.get(Calendar.MINUTE)}:" +
                 "${current.get(Calendar.SECOND)}") ?: return ColorConstants.dayGradient
 
-        if(currentTime.after(timeMorning) && currentTime.before(timeDay)) {
-            return ColorConstants.morningGradient
+        return if(currentTime.after(timeMorning) && currentTime.before(timeDay)) {
+            ColorConstants.morningGradient
         } else if(currentTime.after(timeDay) && currentTime.before(timeEvening)) {
-            return ColorConstants.dayGradient
+            ColorConstants.dayGradient
         } else if(currentTime.after(timeEvening) && currentTime.before(timeMorning)) {
-            return ColorConstants.eveningGradient
+            ColorConstants.eveningGradient
         } else {
-            return ColorConstants.dayGradient
+            ColorConstants.dayGradient
         }
-
     }
-
 }
