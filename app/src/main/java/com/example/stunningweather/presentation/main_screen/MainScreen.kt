@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -28,25 +30,68 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.util.*
 
-@OptIn(ExperimentalPermissionsApi::class)
-@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(
+    ExperimentalPermissionsApi::class,
+    ExperimentalMaterialApi::class
+)
+
+@SuppressLint(
+    "CoroutineCreationDuringComposition",
+    "UnusedMaterialScaffoldPaddingParameter"
+)
+
 @Composable
 fun MainScreen(
     viewModel: MainScreenViewModel = hiltViewModel(),
     navigationCallback: (Screen) -> Unit
 ) {
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    viewModel.weatherThemeBasedOnDayTime()
-                )
-            )
-    ) {
+    val coroutineScope = rememberCoroutineScope()
+    val modalSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.Expanded },
+        skipHalfExpanded = true
+    )
 
-//        AddLocationButtonSheet()
+    ModalBottomSheetLayout(
+        sheetState = modalSheetState,
+        sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+        sheetContent = {
+            Column(
+                Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(onClick = { coroutineScope.launch { modalSheetState.hide() } }) {
+                    Text("Hide sheet")
+                }
+
+                Spacer(modifier = Modifier
+                    .height(68.dp)
+                )
+
+                Button(onClick = { coroutineScope.launch { modalSheetState.hide() } }) {
+                    Text("Hide sheet")
+                }
+            }
+        }
+    ) {
+        Scaffold {
+            Box(
+                modifier = Modifier
+                    .background(Color.White.copy(alpha = 0f))
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                viewModel.weatherThemeBasedOnDayTime()
+                            )
+                        )
+                ) {
 
 //        Button(onClick = {
 //            viewModel.viewModelScope.launch(Dispatchers.IO) {
@@ -56,87 +101,100 @@ fun MainScreen(
 //            Text(text = "Fetch saved data")
 //        }
 
-        if (!NetworkUtils.isOnline()) {
-            Column(
-                modifier = Modifier
-                    .padding(60.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                    // Add Location Button
+                    ButtonWithSymbol {
+                        coroutineScope.launch {
+                            if (modalSheetState.isVisible)
+                                modalSheetState.hide()
+                            else
+                                modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                        }
+                    }
 
-                Spacer(Modifier.height(160.dp))
+                    if (!NetworkUtils.isOnline()) {
+                        Column(
+                            modifier = Modifier
+                                .padding(60.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
 
-                Text(
-                    text = GeneralConstants.noConnectionText,
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontStyle = FontStyle.Normal,
-                    color = Color.White
-                )
+                            Spacer(Modifier.height(160.dp))
 
-                Spacer(Modifier.height(18.dp))
+                            Text(
+                                text = GeneralConstants.noConnectionText,
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontStyle = FontStyle.Normal,
+                                color = Color.White
+                            )
 
-                Image(
-                    modifier = Modifier
-                        .padding(48.dp),
-                    painter = painterResource(GeneralConstants.noConnectionImage),
-                    contentDescription = null
-                )
-            }
+                            Spacer(Modifier.height(18.dp))
 
-        } else {
-            val context = LocalContext.current
-            if (!viewModel.state.didFetchWeather) {
-                PermissionRequesters.CheckLocationPermission(
-                    context = LocalContext.current,
-                    locationRequestHandler = {
-                        MainScope().launch { it.launchPermissionRequest() }
+                            Image(
+                                modifier = Modifier
+                                    .padding(48.dp),
+                                painter = painterResource(GeneralConstants.noConnectionImage),
+                                contentDescription = null
+                            )
+                        }
 
-                    }) { viewModel.fetchWeatherForCurrentLocation(context) }
-            }
+                    } else {
+                        val context = LocalContext.current
+                        if (!viewModel.state.didFetchWeather) {
+                            PermissionRequesters.CheckLocationPermission(
+                                context = LocalContext.current,
+                                locationRequestHandler = {
+                                    MainScope().launch { it.launchPermissionRequest() }
 
-
-            // Current weather
-            Column {
-                MainWeatherModule(
-                    name = viewModel.state.generalForecast.value.location.name,
-                    country = viewModel.state.generalForecast.value.location.country,
-                    weather = viewModel.state.generalForecast.value.current.temp_c.toInt(),
-                    description = viewModel.state.generalForecast.value.current.condition.text,
-                    feelsLike = viewModel.state.generalForecast.value.current.feelslike_c.toInt(),
-                    humidity = viewModel.state.generalForecast.value.current.humidity
-                )
+                                }) { viewModel.fetchWeatherForCurrentLocation(context) }
+                        }
 
 
-                // Hourly forecast
-                if (viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty()) {
-                    ScrollComponent(
-                        items = viewModel.state.generalForecast.value.forecast.forecastday.first().hour,
-                        height = 150.dp
-                    ) { _, item ->
+                        // Current weather
+                        Column {
+                            MainWeatherModule(
+                                name = viewModel.state.generalForecast.value.location.name,
+                                country = viewModel.state.generalForecast.value.location.country,
+                                weather = viewModel.state.generalForecast.value.current.temp_c.toInt(),
+                                description = viewModel.state.generalForecast.value.current.condition.text,
+                                feelsLike = viewModel.state.generalForecast.value.current.feelslike_c.toInt(),
+                                humidity = viewModel.state.generalForecast.value.current.humidity
+                            )
 
-                        WeatherCell(
-                            title = item.time.substringAfter(' '),
-                            weather = item.temp_c
-                        )
+
+                            // Hourly forecast
+                            if (viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty()) {
+                                ScrollComponent(
+                                    items = viewModel.state.generalForecast.value.forecast.forecastday.first().hour,
+                                    height = 150.dp
+                                ) { _, item ->
+
+                                    WeatherCell(
+                                        title = item.time.substringAfter(' '),
+                                        weather = item.temp_c
+                                    )
+                                }
+                            }
+
+
+                            // Daily forecast
+                            if (viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty())
+                                ScrollComponent(
+                                    items = viewModel.state.generalForecast.value.forecast.forecastday,
+                                    isHorizontal = false,
+                                    fillsMaxHeight = true
+                                ) { _, item ->
+                                    WeatherCell(
+                                        timestamp = item.date_epoch,
+                                        weather = item.day.maxtemp_c,
+                                        isHorizontal = true
+                                    )
+                                }
+                        }
                     }
                 }
-
-
-                // Daily forecast
-                if (viewModel.state.generalForecast.value.forecast.forecastday.isNotEmpty())
-                    ScrollComponent(
-                        items = viewModel.state.generalForecast.value.forecast.forecastday,
-                        isHorizontal = false,
-                        fillsMaxHeight = true
-                    ) { _, item ->
-                        WeatherCell(
-                            timestamp = item.date_epoch,
-                            weather = item.day.maxtemp_c,
-                            isHorizontal = true
-                        )
-                    }
             }
         }
     }
