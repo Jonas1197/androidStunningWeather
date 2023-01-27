@@ -8,7 +8,8 @@ class FetchSavedWeatherData @Inject constructor(
     override val dataSource: WeatherDataRepository
 ) : DatabaseGeneralUseCase<WeatherDataRepository, GeneralForecast> {
 
-    override suspend fun <P> invoke(arguments: Map<String, P>?): GeneralForecast? {
-        return dataSource.getWeatherDataForId(0).data
+    override suspend fun <P> invoke(arguments: Map<String, P>?): GeneralForecast {
+        val data = dataSource.getAllWeatherData()
+        return data.last().data
     }
 }

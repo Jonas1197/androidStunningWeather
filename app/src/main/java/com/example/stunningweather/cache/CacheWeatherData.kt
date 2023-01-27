@@ -3,6 +3,7 @@ package com.example.stunningweather.cache
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.example.stunningweather.models.GeneralForecast
 import javax.annotation.Nonnull
 

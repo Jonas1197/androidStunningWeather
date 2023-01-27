@@ -1,4 +1,4 @@
-package com.example.stunningweather.presentation.main_screen.modules
+package com.example.stunningweather.presentation.main_screen.elements
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

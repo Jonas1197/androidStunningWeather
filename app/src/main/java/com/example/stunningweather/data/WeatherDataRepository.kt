@@ -17,4 +17,8 @@ class WeatherDataRepository(
         return weatherDataDao.getWeatherDataForId(id)
     }
 
+    override fun getAllWeatherData(): List<CacheWeatherData> {
+        return weatherDataDao.getAllWeatherData()
+    }
+
 }

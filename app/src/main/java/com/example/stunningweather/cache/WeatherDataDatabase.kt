@@ -22,6 +22,7 @@ abstract class WeatherDataDatabase: RoomDatabase() {
                         WeatherDataDatabase::class.java,
                         "user_database"
                     ).fallbackToDestructiveMigration()
+//                        .addTypeConverter(Converters::class)
                         .build()
 
                     INSTANCE = instance

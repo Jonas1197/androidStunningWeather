@@ -21,12 +21,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.GeneralConstants
 import com.example.stunningweather.navigation.Screen
 import com.example.stunningweather.presentation.NetworkUtils
-import com.example.stunningweather.presentation.main_screen.modules.MainWeatherModule
-import com.example.stunningweather.presentation.main_screen.modules.WeatherCell
-import com.example.stunningweather.presentation.main_screen.modules.ScrollComponent
 import com.example.stunningweather.presentation.PermissionRequesters
+import com.example.stunningweather.presentation.main_screen.elements.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.example.stunningweather.R
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.util.*
@@ -49,7 +46,17 @@ fun MainScreen(
             )
     ) {
 
-        if(!NetworkUtils.isOnline()) {
+//        AddLocationButtonSheet()
+
+//        Button(onClick = {
+//            viewModel.viewModelScope.launch(Dispatchers.IO) {
+//                viewModel.fetchSavedData()
+//            }
+//        }) {
+//            Text(text = "Fetch saved data")
+//        }
+
+        if (!NetworkUtils.isOnline()) {
             Column(
                 modifier = Modifier
                     .padding(60.dp),
@@ -74,12 +81,13 @@ fun MainScreen(
                     modifier = Modifier
                         .padding(48.dp),
                     painter = painterResource(GeneralConstants.noConnectionImage),
-                    contentDescription = null)
+                    contentDescription = null
+                )
             }
 
         } else {
             val context = LocalContext.current
-            if(!viewModel.state.didFetchWeather) {
+            if (!viewModel.state.didFetchWeather) {
                 PermissionRequesters.CheckLocationPermission(
                     context = LocalContext.current,
                     locationRequestHandler = {
