@@ -7,6 +7,9 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -164,21 +167,46 @@ fun MainScreen(
                         )
                 ) {
 
-                    // Add Location Button
-                    ButtonWithSymbol(
-                        Modifier
-                            .padding(32.dp)
-                            .size(65.dp)
-                            .semantics { testTagsAsResourceId = true }
-                            .testTag("AddButton")
-                    ) {
-                        coroutineScope.launch {
-                            if (modalSheetState.isVisible)
-                                modalSheetState.hide()
-                            else
-                                modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                    Column {
+                        // Add Location Button
+                        ButtonWithSymbol(
+                            Modifier
+                                .padding(start = 32.dp, top = 32.dp)
+                                .size(65.dp)
+                                .semantics { testTagsAsResourceId = true }
+                                .testTag("AddButton"),
+                            symbol = Icons.Rounded.Add,
+                            backgroundColor = ColorConstants.DeepBlue,
+                            tintColor =  Color.White
+                        ) {
+                            coroutineScope.launch {
+                                if (modalSheetState.isVisible)
+                                    modalSheetState.hide()
+                                else
+                                    modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+                            }
+                        }
+
+                        // Add Location Button
+                        ButtonWithSymbol(
+                            Modifier
+                                .padding(start = 32.dp, top = 16.dp)
+                                .size(65.dp)
+                                .semantics { testTagsAsResourceId = true }
+                                .testTag("CurrentLocationButton"),
+                            symbol = Icons.Rounded.LocationOn,
+                            backgroundColor = ColorConstants.NiceGreen,
+                            tintColor =  Color.White
+                        ) {
+//                            coroutineScope.launch {
+//                                if (modalSheetState.isVisible)
+//                                    modalSheetState.hide()
+//                                else
+//                                    modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+//                            }
                         }
                     }
+
 
                     if (!NetworkUtils.isOnline()) {
                         Column(

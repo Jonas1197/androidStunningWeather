@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,19 +24,22 @@ import com.example.stunningweather.ui.ColorConstants
 @Composable
 fun ButtonWithSymbol(
     modifier: Modifier,
+    symbol: ImageVector,
+    tintColor: Color,
+    backgroundColor: Color,
     onClick: () -> Unit = {}
 ) {
 
     Button(
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = ColorConstants.DeepBlue
+            backgroundColor = backgroundColor
         ),
         shape = CircleShape,
         onClick = { onClick() }) {
         Icon(
-            Icons.Rounded.Add,
-            tint = Color.White,
+            symbol,
+            tint = tintColor,
             contentDescription = null
         )
     }
