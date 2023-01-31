@@ -14,9 +14,9 @@ class FetchWeatherDataUseCase @Inject constructor(
 
     override suspend fun invoke(
         apiKey: String,
-        coordinates: String
+        parameter: String
     ): Either<ErrorMessage, GeneralForecast> {
-        val data = dataSource.fetchWeatherData(apiKey, coordinates)
+        val data = dataSource.fetchWeatherData(apiKey, parameter)
 
         return when {
             data != null -> data.right()

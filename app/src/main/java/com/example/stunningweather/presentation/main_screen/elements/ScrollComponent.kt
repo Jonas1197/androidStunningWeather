@@ -8,12 +8,17 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun <T> ScrollComponent(
     title: String = "",
@@ -52,6 +57,8 @@ fun <T> ScrollComponent(
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .semantics { testTagsAsResourceId = true }
+                    .testTag("HourlyWeatherScroll")
                     .apply {
                         if(fillsMaxHeight) {
                             fillMaxHeight()

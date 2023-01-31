@@ -3,20 +3,29 @@ package com.example.stunningweather.presentation.main_screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +34,7 @@ import com.example.stunningweather.navigation.Screen
 import com.example.stunningweather.presentation.NetworkUtils
 import com.example.stunningweather.presentation.PermissionRequesters
 import com.example.stunningweather.presentation.main_screen.elements.*
+import com.example.stunningweather.ui.ColorConstants
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -32,7 +42,7 @@ import java.util.*
 
 @OptIn(
     ExperimentalPermissionsApi::class,
-    ExperimentalMaterialApi::class
+    ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class
 )
 
 @SuppressLint(
@@ -46,6 +56,7 @@ fun MainScreen(
     navigationCallback: (Screen) -> Unit
 ) {
 
+    val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -53,27 +64,84 @@ fun MainScreen(
         skipHalfExpanded = true
     )
 
+
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
         sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
         sheetContent = {
             Column(
                 Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .semantics { testTagsAsResourceId = true }
+                    .testTag("BottomSheetColumn"),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = { coroutineScope.launch { modalSheetState.hide() } }) {
-                    Text("Hide sheet")
+
+                CustomTextField(
+                    modifier = Modifier
+                        .padding(32.dp)
+                        .semantics { testTagsAsResourceId = true }
+                        .testTag("NewLocationTextField"),
+                    hint = "Location name",
+                    shouldClear = viewModel.state.didDismissSheet
+                ) {
+                    println("~~> Text: $it")
                 }
 
-                Spacer(modifier = Modifier
-                    .height(68.dp)
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    modifier = Modifier.padding(start = 42.dp, end = 42.dp),
+                    text = "Enter the coordinates or the name of the location you would like to see the weather data for.",
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 16.sp
                 )
 
-                Button(onClick = { coroutineScope.launch { modalSheetState.hide() } }) {
-                    Text("Hide sheet")
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(32.dp)
+                            .semantics { testTagsAsResourceId = true }
+                            .testTag("DoneSheetButton"),
+                        colors = ButtonDefaults.buttonColors(ColorConstants.DeepBlue),
+                        onClick = { coroutineScope.launch {
+                            focusManager.clearFocus()
+                            modalSheetState.hide()
+                            viewModel.state.didDismissSheet.value = true
+                        } }
+                    ) {
+                        Text("Done")
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(32.dp)
+                            .semantics { testTagsAsResourceId = true }
+                            .testTag("CancelSheetButton"),
+                        colors = ButtonDefaults.buttonColors(ColorConstants.DarkOrange),
+                        onClick = { coroutineScope.launch {
+                            focusManager.clearFocus()
+                            modalSheetState.hide()
+                            viewModel.state.didDismissSheet.value = true
+                        } }
+                    ) {
+                        Text("Cancel")
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(380.dp))
+
             }
         }
     ) {
@@ -81,6 +149,9 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .background(Color.White.copy(alpha = 0f))
+                    .pointerInput(Unit) {
+                        detectTapGestures { focusManager.clearFocus() }
+                    }
             ) {
 
                 Box(
@@ -93,16 +164,14 @@ fun MainScreen(
                         )
                 ) {
 
-//        Button(onClick = {
-//            viewModel.viewModelScope.launch(Dispatchers.IO) {
-//                viewModel.fetchSavedData()
-//            }
-//        }) {
-//            Text(text = "Fetch saved data")
-//        }
-
                     // Add Location Button
-                    ButtonWithSymbol {
+                    ButtonWithSymbol(
+                        Modifier
+                            .padding(32.dp)
+                            .size(65.dp)
+                            .semantics { testTagsAsResourceId = true }
+                            .testTag("AddButton")
+                    ) {
                         coroutineScope.launch {
                             if (modalSheetState.isVisible)
                                 modalSheetState.hide()

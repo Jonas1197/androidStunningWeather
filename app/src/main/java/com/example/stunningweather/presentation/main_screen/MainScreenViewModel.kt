@@ -29,6 +29,7 @@ class MainScreenViewModel @Inject constructor(
 ): ViewModel() {
 
     var state = MainScreenStateObject()
+    var newLocationName: String = ""
 
     @SuppressLint("MissingPermission")
     fun fetchWeatherForCurrentLocation(context: Context) {
@@ -39,10 +40,10 @@ class MainScreenViewModel @Inject constructor(
             val coordinates = if(location != null) "${location.latitude},${location.longitude}" else ""
 
             viewModelScope.launch(Dispatchers.IO) {
-                fetchWeatherData.invoke(GeneralConstants.apiKey, coordinates).fold({ errorMessage ->
-                    println("~~> Error: ${errorMessage.message}")
-                },
-                    { data ->
+                fetchWeatherData.invoke(GeneralConstants.apiKey, coordinates)
+                    .fold({ errorMessage ->
+                        println("~~> Error: ${errorMessage.message}")
+                    }, { data ->
                         state.generalForecast.value = data
                         state.didFetchWeather = true
                         saveFetchedWeatherData(data)
