@@ -15,8 +15,14 @@ class ExampleUnitTest {
 
     @Test
     fun runMaestroFlow() {
+
+        // Get the current bash directory.
+//        "echo \"\$PWD\"".runCommand()
+
+        // Run the maestro test from the flow.yaml file.
         val bashResult = "maestro test flow.yaml".evalBash()
 
+        // For each test statement, check if failed and assert.
         bashResult.stdout.forEach {
             println("~~> Assertion for str: $it")
             assert(!it.contains("FAILED"))

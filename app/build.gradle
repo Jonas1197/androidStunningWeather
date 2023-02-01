@@ -111,6 +111,6 @@ dependencies {
     // LocationServices
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
-    // wuseal
+    // wuseal - Run local shell command directly from kotlin
     implementation 'com.sealwu:kscript-tools:1.0.2'
 }
