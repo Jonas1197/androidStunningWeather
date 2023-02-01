@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -57,8 +58,10 @@ fun <T> ScrollComponent(
             BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .semantics { testTagsAsResourceId = true }
-                    .testTag("HourlyWeatherScroll")
+                    .semantics {
+                        testTagsAsResourceId = true
+                        testTag = "HourlyWeatherScroll"
+                    }
                     .apply {
                         if(fillsMaxHeight) {
                             fillMaxHeight()

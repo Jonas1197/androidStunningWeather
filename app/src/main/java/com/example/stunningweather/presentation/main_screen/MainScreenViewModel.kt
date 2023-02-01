@@ -52,20 +52,37 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
+    fun fetchWeatherForLocationName() {
+        viewModelScope.launch(Dispatchers.IO) {
+            fetchWeatherData.invoke(
+                GeneralConstants.apiKey,
+                newLocationName
+            ).fold({ errorMessage ->
+                println("~~> Error: ${errorMessage.message}")
+            }, { data ->
+                state.generalForecast.value = data
+                state.didFetchWeather = true
+                saveFetchedWeatherData(data)
+            })
+        }
+    }
+
     private suspend fun saveFetchedWeatherData(data: GeneralForecast) {
         val arguments = mapOf(GeneralConstants.dataToSave to data)
         saveDataUseCase.invoke(arguments)
     }
 
-    suspend fun fetchSavedData() {
-        val fetchedData = fetchSavedWeatherData.invoke<nullable>()
+    suspend fun fetchSavedData(): Boolean {
+        var data: GeneralForecast?
+        runBlocking { data = fetchSavedWeatherData.invoke<nullable>() }
 
-        if(fetchedData != null) {
-            println("~~> Data fetched: $fetchedData")
-            println("Temp: ${fetchedData.current.temp_c}")
-        } else {
-            println("~~> No data could be fetched!")
+        if(data!!.current.last_updated != "NULL") {
+            state.generalForecast.value = data!!
+            state.didFetchWeather = true
+            return true
         }
+
+        return false
     }
 
     fun weatherThemeBasedOnDayTime(): List<Color> {

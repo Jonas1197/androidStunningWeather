@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -33,19 +34,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.GeneralConstants
+import com.example.stunningweather.models.GeneralForecast
 import com.example.stunningweather.navigation.Screen
 import com.example.stunningweather.presentation.NetworkUtils
 import com.example.stunningweather.presentation.PermissionRequesters
 import com.example.stunningweather.presentation.main_screen.elements.*
 import com.example.stunningweather.ui.ColorConstants
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 
 @OptIn(
     ExperimentalPermissionsApi::class,
-    ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class
+    ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class, DelicateCoroutinesApi::class
 )
 
 @SuppressLint(
@@ -59,6 +60,7 @@ fun MainScreen(
     navigationCallback: (Screen) -> Unit
 ) {
 
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
     val modalSheetState = rememberModalBottomSheetState(
@@ -75,8 +77,10 @@ fun MainScreen(
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .semantics { testTagsAsResourceId = true }
-                    .testTag("BottomSheetColumn"),
+                    .semantics {
+                        testTagsAsResourceId = true
+                        testTag = "BottomSheetColumn"
+                    },
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -84,12 +88,14 @@ fun MainScreen(
                 CustomTextField(
                     modifier = Modifier
                         .padding(32.dp)
-                        .semantics { testTagsAsResourceId = true }
-                        .testTag("NewLocationTextField"),
+                        .semantics {
+                            testTagsAsResourceId = true
+                            testTag = "NewLocationTextField"
+                        },
                     hint = "Location name",
                     shouldClear = viewModel.state.didDismissSheet
                 ) {
-                    println("~~> Text: $it")
+                    viewModel.newLocationName = it
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -114,14 +120,19 @@ fun MainScreen(
                         modifier = Modifier
                             .width(200.dp)
                             .padding(32.dp)
-                            .semantics { testTagsAsResourceId = true }
-                            .testTag("DoneSheetButton"),
+                            .semantics {
+                                testTagsAsResourceId = true
+                                testTag = "DoneSheetButton"
+                            },
                         colors = ButtonDefaults.buttonColors(ColorConstants.DeepBlue),
-                        onClick = { coroutineScope.launch {
-                            focusManager.clearFocus()
-                            modalSheetState.hide()
-                            viewModel.state.didDismissSheet.value = true
-                        } }
+                        onClick = {
+                            coroutineScope.launch {
+                                focusManager.clearFocus()
+                                modalSheetState.hide()
+                                viewModel.state.didDismissSheet.value = true
+                                viewModel.fetchWeatherForLocationName()
+                            }
+                        }
                     ) {
                         Text("Done")
                     }
@@ -130,14 +141,19 @@ fun MainScreen(
                         modifier = Modifier
                             .width(200.dp)
                             .padding(32.dp)
-                            .semantics { testTagsAsResourceId = true }
-                            .testTag("CancelSheetButton"),
+                            .semantics {
+                                testTagsAsResourceId = true
+                                testTag = "CancelSheetButton"
+
+                            },
                         colors = ButtonDefaults.buttonColors(ColorConstants.DarkOrange),
-                        onClick = { coroutineScope.launch {
-                            focusManager.clearFocus()
-                            modalSheetState.hide()
-                            viewModel.state.didDismissSheet.value = true
-                        } }
+                        onClick = {
+                            coroutineScope.launch {
+                                focusManager.clearFocus()
+                                modalSheetState.hide()
+                                viewModel.state.didDismissSheet.value = true
+                            }
+                        }
                     ) {
                         Text("Cancel")
                     }
@@ -173,11 +189,13 @@ fun MainScreen(
                             Modifier
                                 .padding(start = 32.dp, top = 32.dp)
                                 .size(65.dp)
-                                .semantics { testTagsAsResourceId = true }
-                                .testTag("AddButton"),
+                                .semantics {
+                                    testTagsAsResourceId = true
+                                    testTag = "AddButton"
+                                },
                             symbol = Icons.Rounded.Add,
                             backgroundColor = ColorConstants.DeepBlue,
-                            tintColor =  Color.White
+                            tintColor = Color.White
                         ) {
                             coroutineScope.launch {
                                 if (modalSheetState.isVisible)
@@ -192,18 +210,16 @@ fun MainScreen(
                             Modifier
                                 .padding(start = 32.dp, top = 16.dp)
                                 .size(65.dp)
-                                .semantics { testTagsAsResourceId = true }
-                                .testTag("CurrentLocationButton"),
+                                .semantics {
+                                    testTagsAsResourceId = true
+                                    testTag = "CurrentLocationButton"
+                                },
                             symbol = Icons.Rounded.LocationOn,
                             backgroundColor = ColorConstants.NiceGreen,
-                            tintColor =  Color.White
+                            tintColor = Color.White
                         ) {
-//                            coroutineScope.launch {
-//                                if (modalSheetState.isVisible)
-//                                    modalSheetState.hide()
-//                                else
-//                                    modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
-//                            }
+                            viewModel.state.generalForecast.value = GeneralForecast()
+                            viewModel.fetchWeatherForCurrentLocation(context)
                         }
                     }
 
@@ -238,10 +254,15 @@ fun MainScreen(
                         }
 
                     } else {
-                        val context = LocalContext.current
-                        if (!viewModel.state.didFetchWeather) {
+
+                        var didFetchSavedData = true
+                        GlobalScope.launch {
+                            didFetchSavedData = viewModel.fetchSavedData()
+                        }
+
+                        if(!didFetchSavedData && !viewModel.state.didFetchWeather) {
                             PermissionRequesters.CheckLocationPermission(
-                                context = LocalContext.current,
+                                context = context,
                                 locationRequestHandler = {
                                     MainScope().launch { it.launchPermissionRequest() }
 

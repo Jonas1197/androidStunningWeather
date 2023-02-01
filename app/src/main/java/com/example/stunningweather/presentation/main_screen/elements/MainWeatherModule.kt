@@ -38,8 +38,8 @@ fun MainWeatherModule(
         Text(
             modifier = Modifier
                 .semantics {
-                    testTag = "LocationNameLabel"
                     testTagsAsResourceId = true
+                    testTag = "LocationNameLabel"
                 }
                 .padding(top = 54.dp),
             text = name,
@@ -54,8 +54,8 @@ fun MainWeatherModule(
         Text(
             modifier = Modifier
                 .semantics {
-                    testTag = "CountryNameLabel"
                     testTagsAsResourceId = true
+                    testTag = "CountryNameLabel"
                 }
                 .padding(top = 8.dp),
             text = country,
@@ -70,8 +70,9 @@ fun MainWeatherModule(
         Text(
             modifier = Modifier
                 .semantics {
-                    testTag = "BigWeatherLabel"
                     testTagsAsResourceId = true
+                    testTag = "BigWeatherLabel"
+
                 }
                 .padding(top = 16.dp),
             text = "$weather°",
@@ -86,8 +87,8 @@ fun MainWeatherModule(
         Text(
             modifier = Modifier
                 .semantics {
-                    testTag = "WeatherDescriptionLabel"
                     testTagsAsResourceId = true
+                    testTag = "WeatherDescriptionLabel"
                 }
                 .padding(top = 8.dp),
             text = description,
@@ -110,8 +111,8 @@ fun MainWeatherModule(
             Text(
                 modifier = Modifier
                     .semantics {
-                        testTag = "FeelsLikeLabel"
                         testTagsAsResourceId = true
+                        testTag = "FeelsLikeLabel"
                     }
                     .padding(top = 8.dp),
                 text = "Feels like: $feelsLike°",
@@ -131,8 +132,8 @@ fun MainWeatherModule(
             Text(
                 modifier = Modifier
                     .semantics {
-                        testTag = "HumidityLabel"
                         testTagsAsResourceId = true
+                        testTag = "HumidityLabel"
                     }
                     .padding(top = 8.dp),
                 text = "Humidity: $humidity%",

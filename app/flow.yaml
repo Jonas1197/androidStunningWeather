@@ -1,0 +1,111 @@
+appId: com.example.stunningweather
+---
+
+
+# Launches the app.
+- launchApp
+
+# Swipe left on element with test tag "HourlyWeatherScroll".
+- swipe:
+    from:
+        id: "HourlyWeatherScroll"
+    direction: LEFT
+
+
+# Swipe right on element with test tag "HourlyWeatherScroll".
+- swipe:
+    from:
+        id: "HourlyWeatherScroll"
+    direction: RIGHT
+
+
+# Tap on element with test tag "AddButton".
+- tapOn:
+    id: AddButton
+
+
+# Swipe down to dismiss the presented bottom sheet.
+- swipe:
+    from:
+        id: "BottomSheetColumn"
+    direction: DOWN
+
+
+# Tap on element with test tag "AddButton".
+- tapOn:
+    id: AddButton
+
+
+# Tap on element with test tag "NewLocationTextField".
+- tapOn:
+    id: NewLocationTextField
+
+
+# Enter text "Braunschweig".
+- inputText: 'Braunschweig'
+
+
+# Tap on element with test tag "CancelSheetButton".
+- tapOn:
+    id: CancelSheetButton
+
+
+# Tap on element with test tag "AddButton".
+- tapOn:
+    id: AddButton
+
+
+# Copy text from element with test id "NewLocationTextField".
+- copyTextFrom:
+    id: NewLocationTextField
+
+
+# Check if copied text is an empty string.
+- assertTrue: ${maestro.copiedText == ""}
+
+
+# Tap on element with test tag "NewLocationTextField".
+- tapOn:
+    id: NewLocationTextField
+
+
+# Enter text "London".
+- inputText: 'London'
+
+
+# Tap on element with test tag "DoneSheetButton".
+- tapOn:
+    id: DoneSheetButton
+
+
+# Wait 3 seconds.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+
+# Get text from element with test tag "LocationNameLabel".
+- copyTextFrom:
+    id: LocationNameLabel
+
+
+# Check if copied text is equal to "London".
+- assertTrue: ${maestro.copiedText == "London"}
+
+
+# Tap on element with test tag "CurrentLocationButton".
+- tapOn:
+    id: CurrentLocationButton
+
+
+# Wait 3 seconds.
+- waitForAnimationToEnd:
+    timeout: 3000
+
+
+# Get text from element with test tag "LocationNameLabel".
+- copyTextFrom:
+    id: LocationNameLabel
+
+
+# Check if copied text is equal to "Munich" or "Ismaning".
+- assertTrue: ${maestro.copiedText == "Munich" || maestro.copiedText == "Ismaning"}
