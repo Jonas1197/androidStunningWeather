@@ -44,6 +44,7 @@ class MainScreenViewModel @Inject constructor(
                     .fold({ errorMessage ->
                         println("~~> Error: ${errorMessage.message}")
                     }, { data ->
+                        println("~~> Data returned: $data")
                         state.generalForecast.value = data
                         state.didFetchWeather = true
                         saveFetchedWeatherData(data)
@@ -74,15 +75,18 @@ class MainScreenViewModel @Inject constructor(
 
     suspend fun fetchSavedData(): Boolean {
         var data: GeneralForecast?
-        runBlocking { data = fetchSavedWeatherData.invoke<nullable>() }
 
-        if(data!!.current.last_updated != "NULL") {
-            state.generalForecast.value = data!!
-            state.didFetchWeather = true
-            return true
-        }
+        runBlocking { data = fetchSavedWeatherData.invoke<nullable>()?.data }
 
-        return false
+        return if(data != null)
+            if(data!!.current.last_updated != "NULL") {
+                state.generalForecast.value = data!!
+                state.didFetchWeather = true
+                true
+            } else
+                false
+        else
+            false
     }
 
     fun weatherThemeBasedOnDayTime(): List<Color> {

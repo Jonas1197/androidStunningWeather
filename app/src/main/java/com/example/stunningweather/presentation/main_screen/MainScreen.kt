@@ -255,9 +255,12 @@ fun MainScreen(
 
                     } else {
 
-                        var didFetchSavedData = true
-                        GlobalScope.launch {
-                            didFetchSavedData = viewModel.fetchSavedData()
+                        var didFetchSavedData = false
+
+                        runBlocking {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                didFetchSavedData = viewModel.fetchSavedData()
+                            }
                         }
 
                         if(!didFetchSavedData && !viewModel.state.didFetchWeather) {
@@ -265,7 +268,6 @@ fun MainScreen(
                                 context = context,
                                 locationRequestHandler = {
                                     MainScope().launch { it.launchPermissionRequest() }
-
                                 }) { viewModel.fetchWeatherForCurrentLocation(context) }
                         }
 
