@@ -3,8 +3,6 @@ package com.example.stunningweather
 import evalBash
 import org.junit.Test
 
-import org.junit.Assert.*
-import runCommand
 
 /**
  * Example local unit test, which will execute on the development machine (host).
