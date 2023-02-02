@@ -264,11 +264,19 @@ fun MainScreen(
                         }
 
                         if(!didFetchSavedData && !viewModel.state.didFetchWeather) {
-                            PermissionRequesters.CheckLocationPermission(
-                                context = context,
-                                locationRequestHandler = {
-                                    MainScope().launch { it.launchPermissionRequest() }
-                                }) { viewModel.fetchWeatherForCurrentLocation(context) }
+
+                            // For Automated Testing
+                            viewModel.newLocationName = "Munich"
+                            viewModel.fetchWeatherForLocationName()
+
+                            // Production
+//                            PermissionRequesters.CheckLocationPermission(
+//                                context = context,
+//                                locationRequestHandler = {
+//                                    MainScope().launch { it.launchPermissionRequest() }
+//                                }) {
+//                                viewModel.fetchWeatherForCurrentLocation(context)
+//                            }
                         }
 
 
@@ -290,7 +298,6 @@ fun MainScreen(
                                     items = viewModel.state.generalForecast.value.forecast.forecastday.first().hour,
                                     height = 150.dp
                                 ) { _, item ->
-
                                     WeatherCell(
                                         title = item.time.substringAfter(' '),
                                         weather = item.temp_c
