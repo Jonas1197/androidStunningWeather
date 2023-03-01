@@ -69,6 +69,11 @@ fun MainScreen(
         skipHalfExpanded = true
     )
 
+    println()
+    println()
+    println()
+    println()
+    
 
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
