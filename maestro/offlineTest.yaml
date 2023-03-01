@@ -1,0 +1,40 @@
+appId: com.example.stunningweather
+---
+
+- launchApp
+
+- tapOn:
+    id: AddButton
+
+
+- tapOn:
+    id: NewLocationTextField
+
+
+- inputText: 'Braunschweig'
+
+
+- tapOn:
+    id: CancelSheetButton
+
+
+- tapOn:
+    id: AddButton
+
+
+- copyTextFrom:
+    id: NewLocationTextField
+
+
+- assertTrue: ${maestro.copiedText == ""}
+
+
+- tapOn:
+    id: NewLocationTextField
+
+
+- inputText: 'London'
+
+
+- tapOn:
+    id: DoneSheetButton

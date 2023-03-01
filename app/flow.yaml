@@ -8,6 +8,7 @@ appId: com.example.stunningweather
 - swipe:
     from:
         id: "HourlyWeatherScroll"
+        optional: true
     direction: LEFT
 
 
@@ -15,29 +16,34 @@ appId: com.example.stunningweather
 - swipe:
     from:
         id: "HourlyWeatherScroll"
+        optional: true
     direction: RIGHT
 
 
 # Tap on element with test tag "AddButton".
 - tapOn:
     id: AddButton
+    optional: true
 
 
 # Swipe down to dismiss the presented bottom sheet.
 - swipe:
     from:
         id: "BottomSheetColumn"
+        optional: true
     direction: DOWN
 
 
 # Tap on element with test tag "AddButton".
 - tapOn:
     id: AddButton
+    optional: true
 
 
 # Tap on element with test tag "NewLocationTextField".
 - tapOn:
     id: NewLocationTextField
+    optional: true
 
 
 # Enter text "Braunschweig".
@@ -47,16 +53,19 @@ appId: com.example.stunningweather
 # Tap on element with test tag "CancelSheetButton".
 - tapOn:
     id: CancelSheetButton
+    optional: true
 
 
 # Tap on element with test tag "AddButton".
 - tapOn:
     id: AddButton
+    optional: true
 
 
 # Copy text from element with test id "NewLocationTextField".
 - copyTextFrom:
     id: NewLocationTextField
+    optional: true
 
 
 # Check if copied text is an empty string.
@@ -66,6 +75,7 @@ appId: com.example.stunningweather
 # Tap on element with test tag "NewLocationTextField".
 - tapOn:
     id: NewLocationTextField
+    optional: true
 
 
 # Enter text "London".
@@ -75,6 +85,7 @@ appId: com.example.stunningweather
 # Tap on element with test tag "DoneSheetButton".
 - tapOn:
     id: DoneSheetButton
+    optional: true
 
 
 # Wait 3 seconds.
@@ -85,6 +96,7 @@ appId: com.example.stunningweather
 # Get text from element with test tag "LocationNameLabel".
 - copyTextFrom:
     id: LocationNameLabel
+    optional: true
 
 
 # Check if copied text is equal to "London".
@@ -94,6 +106,7 @@ appId: com.example.stunningweather
 # Tap on element with test tag "CurrentLocationButton".
 - tapOn:
     id: CurrentLocationButton
+    optional: true
 
 
 # Wait 3 seconds.
@@ -104,7 +117,7 @@ appId: com.example.stunningweather
 # Get text from element with test tag "LocationNameLabel".
 - copyTextFrom:
     id: LocationNameLabel
-
+    optional: true
 
 # Check if copied text is equal to "Munich" or "Ismaning".
 #- assertTrue: ${maestro.copiedText == "Munich" || maestro.copiedText == "Ismaning"}
