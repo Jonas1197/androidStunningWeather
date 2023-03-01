@@ -80,6 +80,7 @@ fun MainScreen(
             print("main")
             print("main")
             print("main")
+            print("another main")
             Column(
                 Modifier
                     .fillMaxWidth()
