@@ -70,10 +70,16 @@ fun MainScreen(
     )
 
 
+
+
     ModalBottomSheetLayout(
         sheetState = modalSheetState,
         sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
         sheetContent = {
+            print("main")
+            print("main")
+            print("main")
+            print("main")
             Column(
                 Modifier
                     .fillMaxWidth()
